@@ -42,4 +42,14 @@ struct fsm_{
     unsigned int input_buffer_cursor; /* Cursor to read the above input_buffer in continuation */
 };
 
+typedef enum{
+    FSM_NO_TRANSITION,
+    FSM_NO_ERROR
+}fsm_error_t;
+
+
+fsm_error_t execute_fsm(fsm_t* fsm, char* input_buffer, unsigned int size, fsm_bool_t* fsm_result);
+
+
+
 #endif
