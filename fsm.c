@@ -67,4 +67,54 @@ tt_entry_t* create_and_insert_new_tt_entry(tt_t* trans_table,
     tt_entry_ptr->next_state = next_state;
 }
 
-            
+/*
+****************************************************************************
+*Execute FSM 
+****************************************************************************
+*/           
+fsm_error_t execute_fsm(fsm_t* fsm, 
+                        char* input_buffer, 
+                        unsigned int size, 
+                        fsm_bool_t* fsm_result)
+{
+    state_t* initial_state = fsm->initial_state;
+    assert(initial_state);
+    state_t* current_state = initial_state;
+    state_t* next_state = NULL;
+
+    fsm->input_buffer_cursor = 0;
+    unsigned int length_read = 0;
+    unsigned int input_buffer_len = 0;
+    char* buffer_to_parse;
+
+    if(fsm_result)
+    {
+        *fsm_result = FSM_FALSE;
+    } 
+
+    /* Use Application Supplied Buffer */
+    if(input_buffer && size)
+    {
+        buffer_to_parse = input_buffer;
+        input_buffer_len = size;
+    }
+    else
+    {
+     /* Use FSM buffer set by the application.*/   
+     buffer_to_parse = fsm->input_buffer;
+     input_buffer_len = fsm->input_buffer_size;
+    }
+
+    /*
+    * If application has not supplied output buffer,
+    * Use FSM's internal output buffer 
+    */
+   if(!output_buffer)
+   {
+       output_buffer = &fsm->fsm_output_buff;
+   }
+
+
+
+
+} 
