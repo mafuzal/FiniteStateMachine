@@ -5,17 +5,41 @@ typedef struct fsm_ fsm_t;
 typedef struct state_ state_t;
 
 #define MAX_INP_BUFFER_LEN 128
+#define MAX_OUP_BUFFER_LEN 128
 #define MAX_TRANSITION_TABLE_SIZE 128
 #define MAX_STATE_NAME_SIZE 32
 #define MAX_FSM_NAME_SIZE 32
 #define MAX_TRANSITION_KEY_SIZE 64 
 #define MAX_FSM_OUTPUT_BUFFER 1024
+#define MAX_TT_ENTRY_CALLBACKS 5 
 
+
+typedef struct state_ statet_t;
+typedef struct fsm_ fsm_t;
 
 typedef enum{
     FSM_FALSE,
     FSM_TRUE
 }fsm_bool_t;
+
+typedef unsigned int(*input_fn)(
+    char*,
+    unsigned int,
+    unsigned int,
+    char*,
+    unsigned int*,
+    unsigned int
+);
+
+typedef void(*output_fn)(state_t *, state_t*,
+                char*, unsigned int,
+                fsm_output_buff_t*);
+
+void fsm_echo_output_fn(state_t *from, state_t *to,
+                        char* input_buff,
+                        unsigned int input_buff_size,
+                        fsm_output_buff_t* fsm_output_buff);
+
 
 typedef fsm_bool_t (*input_matching_fn)(
     char* data1,
