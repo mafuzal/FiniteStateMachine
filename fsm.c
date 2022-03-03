@@ -16,6 +16,14 @@ fsm_t *create_new_fsm(const char *fsm_name)
     return fsm;
 }
 
+
+void set_fsm_input_buffer_size(fsm_t* fsm, unsigned int size)
+{
+    fsm->input_buffer[size] = '\0';
+    fsm->input_buffer_size = size;
+}
+
+
 /*
 ****************************************************************************
 *Create a new state
