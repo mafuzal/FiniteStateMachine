@@ -13,6 +13,7 @@ fsm_t *create_new_fsm(const char *fsm_name)
     fsm_t *fsm = calloc(1, sizeof(fsm_t));
     strncpy(fsm->fsm_name, fsm_name, MAX_FSM_NAME_SIZE - 1);
     fsm->fsm_name[MAX_FSM_NAME_SIZE - 1] = '\0';
+    fsm_register_input_matching_fn_cb(fsm, set_fsm_default_input_fn);
     return fsm;
 }
 
