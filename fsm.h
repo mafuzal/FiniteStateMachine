@@ -2,9 +2,6 @@
 #define __FSM__
 #include <assert.h>
 
-typedef struct fsm_ fsm_t;
-typedef struct state_ state_t;
-
 typedef enum
 {
     FSM_FALSE,
@@ -20,12 +17,22 @@ typedef enum
 #define MAX_FSM_OUTPUT_BUFFER 1024
 #define MAX_TT_ENTRY_CALLBACKS 5
 
+typedef struct fsm_ fsm_t;
+typedef struct state_ state_t;
+
+typedef struct fsm_output_buff_
+{
+    char output_buffer[MAX_FSM_OUTPUT_BUFFER];
+    unsigned int curr_pos;
+} fsm_output_buff_t;
+
+
 typedef unsigned int (*input_fn)(
-    char *,
+    char*,
     unsigned int,
     unsigned int,
-    char *,
-    unsigned int *,
+    char*,
+    unsigned int*,
     unsigned int);
 
 typedef void (*output_fn)(state_t *, state_t *,
@@ -44,18 +51,25 @@ typedef fsm_bool_t (*input_matching_fn)(
     unsigned int user_data_len,
     unsigned int *length_read);
 
-typedef struct fsm_output_buff_
-{
-    char output_buffer[MAX_FSM_OUTPUT_BUFFER];
-    unsigned int curr_pos;
-} fsm_output_buff_t;
+
 
 typedef struct tt_entry_
 {
     char transition_key[MAX_TRANSITION_KEY_SIZE];
     unsigned int transition_key_size;
     state_t *next_state;
+    input_matching_fn input_matching_fn_cb[MAX_TT_ENTRY_CALLBACKS];
 } tt_entry_t;
+
+
+static inline fsm_bool_t is_tt_entry_empty(tt_entry_t* tt_entry)
+{
+    if(!tt_entry->next_state)
+    {
+        return FSM_TRUE;
+    }
+    return FSM_FALSE;
+}
 
 typedef struct tt_
 {
@@ -69,6 +83,18 @@ struct state_
     tt_t state_trans_table;               /* Transition Table of the state */
     fsm_bool_t is_final;                  /* Boolean if the state is final or not*/
 };
+
+static inline tt_entry_t* get_tt_entry(
+    state_t* state,
+    int index)
+    {
+        assert(index < MAX_TRANSITION_TABLE_SIZE);
+        return &(state->state_trans_table.tt_entry[index]);
+    }
+
+void init_fsm_output_buffer(fsm_output_buff_t* fsm_output_buff);
+
+
 
 struct fsm_
 {
