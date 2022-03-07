@@ -73,19 +73,18 @@ void set_fsm_initial_state(fsm_t *fsm, state_t *state)
     fsm->initial_state = state;
 }
 
-
-
-tt_entry_t* get_next_empty_tt_entry(tt_t* trans_table)
+tt_entry_t *get_next_empty_tt_entry(tt_t *trans_table)
 {
-    tt_entry_t* tt_entry_ptr = NULL;
+    tt_entry_t *tt_entry_ptr = NULL;
     assert(trans_table);
 
     FSM_ITERATE_TRANS_TABLE_BEGIN(trans_table, tt_entry_ptr)
     {
         /*NO OP */
-    }FSM_ITERATE_TRANS_TABLE_END(trans_table, tt_entry_ptr);
+    }
+    FSM_ITERATE_TRANS_TABLE_END(trans_table, tt_entry_ptr);
 
-    if(is_tt_entry_empty(tt_entry_ptr) == FSM_TRUE)
+    if (is_tt_entry_empty(tt_entry_ptr) == FSM_TRUE)
         return tt_entry_ptr;
 
     return NULL;
@@ -124,6 +123,51 @@ void create_and_insert_new_tt_entry_wild(state_t *from_state,
                                                           0, 0, output_fn_cb, to_state);
 
     register_input_matching_tt_entry_cb(tt_entry, match_any_character_match_fn);
+}
+
+static fsm_bool_t fsm_evaluate_transition_entry_match(fsm_t *fsm,
+                                                      tt_entry_t *tt_entry,
+                                                      char *input_buffer,
+                                                      unsigned int input_buffer_len,
+                                                      unsigned int *length_read)
+{
+    unsigned int i = 0;
+    fsm_bool_t is_tt_entry_cb_present = FSM_FALSE;
+    fsm_bool_t res = FSM_FALSE;
+
+    if (!input_buffer)
+        return FSM_TRUE;
+
+    is_tt_entry_cb_present = tt_entry->input_matching_fn_cb[0] ? FSM_TRUE : FSM_FALSE;
+
+    if (is_tt_entry_cb_present)
+    {
+        for (; i < MAX_TT_ENTRY_CALLBACKS; i++)
+        {
+            if (!tt_entry->input_matching_fn_cb[i])
+            {
+                return FSM_FALSE;
+            }
+
+            if ((tt_entry->input_matching_fn_cb[i])(
+                    NULL, 0, input_buffer, input_buffer_len, length_read))
+            {
+                return FSM_TRUE;
+            }
+            *length_read = 0;
+        }
+        return FSM_FALSE;
+    }
+
+    res = fsm->input_matching_fn_cb(tt_entry->transition_key,
+                                    tt_entry->transition_key_size,
+                                    input_buffer, input_buffer_len, length_read);
+
+    if (res == FSM_TRUE)
+    {
+        *length_read = tt_entry->transition_key_size;
+    }
+    return res;
 }
 
 static state_t *fsm_apply_transition(fsm_t *fsm, state_t *state,
