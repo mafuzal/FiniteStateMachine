@@ -19,14 +19,13 @@ void bit_flipper_output_fn_gen(state_t *from, state_t *to,
                                           to->state_name);
 }
 
-
 int main(int argc, char **argv)
 {
 
     /*Create a FSM */
     fsm_t *fsm = create_new_fsm("Bit Flipper");
 
-    /*Create FSM State*/ 
+    /*Create FSM State*/
     state_t *state_S0 = create_new_state("S0", FSM_TRUE);
     // state_t *state_S0 = create_new_state(fsm, "S0", FSM_TRUE, bit_flipper_key_match_fn);
 
@@ -36,38 +35,52 @@ int main(int argc, char **argv)
     /* Insert Transitions into State's Transition Table*/
     char bit = '0';
     create_and_insert_new_tt_entry(&state_S0->state_trans_table,
-                                  &bit, 1,
-                                  bit_flipper_output_fn_gen,
-                                  state_S0);
+                                   &bit, 1,
+                                   bit_flipper_output_fn_gen,
+                                   state_S0);
 
     bit = '1';
     create_and_insert_new_tt_entry(&state_S0->state_trans_table,
-                                  &bit, 1,
-                                  bit_flipper_output_fn_gen,
-                                  state_S0);
-
+                                   &bit, 1,
+                                   bit_flipper_output_fn_gen,
+                                   state_S0);
 
     /*
-    * FSM creation has been complete, now let us see how our FSM perform 
-    */
+     * FSM creation has been complete, now let us see how our FSM perform
+     */
 
-   fsm_bool_t fsm_result;
-   fsm_error_t fsm_error; 
+    fsm_bool_t fsm_result;
+    fsm_error_t fsm_error;
 
-   fsm_error = execute_fsm(fsm,
-                          "0000000\0",
-                          strlen("0000000\0"),
-                          0,
-                          &fsm_result);
+    fsm_error = execute_fsm(fsm,
+                            "0000000\0",
+                            strlen("0000000\0"),
+                            0,
+                            &fsm_result);
 
-    if(fsm_erro == FSM_NO_ERROR)
+    if (fsm_erro == FSM_NO_ERROR)
     {
-        printf("FSM result = %s\n", fsm_result == FSM_TRUE ? "FSM_TRUE":"FSM_FALSE");
+        printf("FSM result = %s\n", fsm_result == FSM_TRUE ? "FSM_TRUE" : "FSM_FALSE");
         printf("FSM Output string : \n%s\n", fsm_output_buff.output_buffer);
     }
 
     /*FSM for email Validation */
     fsm_t *email_validator = email_validator_fsm();
-    
+    fsm_error = execute_fsm(email_validator,
+                            "TBA\0",
+                            strlen("TBA\0"),
+                            0,
+                            &fsm_result);
 
+    if (fsm_error == FSM_NO_ERROR)
+    {
+        if (fsm_result == FSM_TRUE)
+            printf("Valid email\n");
+        else
+            printf("Invalid Email\n")
+    }
+    else
+    {
+        printf("FSM State Machine Failed\n");
+    }
 }
