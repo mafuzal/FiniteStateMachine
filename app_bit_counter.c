@@ -40,3 +40,7 @@ void bit_flipper_fn_gen(state_t *from, state_t *to,
                                           from->state_name, *input_buff, out,
                                           to->state_name);
 }
+int main(int argc, char **argv)
+{
+    fsm_t *fsm = create_new_fsm("Bit Flipper");
+}
