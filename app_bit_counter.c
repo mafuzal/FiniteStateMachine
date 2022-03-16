@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
     if(fsm_error == FSM_NO_ERROR)
     {
-        printf("FSM result")
+        printf("FSM result = %s\n", fsm_result == FSM_TRUE ? "FSM_TRUE":"FSM_FALSE");
         
     }
 }
