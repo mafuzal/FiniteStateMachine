@@ -83,4 +83,14 @@ int main(int argc, char **argv)
     {
         printf("FSM State Machine Failed\n");
     }
+
+
+    if(fsm_error == FSM_NO_ERROR)
+    {
+        printf("Hex = %s\n",fsm_bin_to_hex->fsm_output_buff.output_buffer);
+    }
+
+    
+
+
 }
