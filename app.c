@@ -85,6 +85,13 @@ int main(int argc, char **argv)
     }
 
 
+
+    fsm_t *fsm_bin_to_hex = fsm_binary_to_hex();
+    fsm_error = execute_fsm(fsm_bin_to_hex,
+                            "00011111111111111111111111111111\0",
+                            strlen("00011111111111111111111111111111\0"),
+                            0, 0);
+
     if(fsm_error == FSM_NO_ERROR)
     {
         printf("Hex = %s\n",fsm_bin_to_hex->fsm_output_buff.output_buffer);
